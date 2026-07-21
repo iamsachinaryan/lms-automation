@@ -59,7 +59,7 @@ if exist "lms-automation" (
     echo  Folder already hai. Skip.
     cd lms-automation
 ) else (
-    git clone https://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@github.com/iamsachinaryan/lms-automation.git
+    git clone https://github.com/iamsachinaryan/lms-automation.git
     if %errorlevel% neq 0 (
         echo  ERROR: Download fail hua! Internet check karo.
         pause
