@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  lms-automator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lms-automator
+    restart: unless-stopped
+
+    # ── Environment ─────────────────────────────────────────────────────────
+    env_file:
+      - .env
+
+    # ── Config file mount ───────────────────────────────────────────────────
+    volumes:
+      - ./videos.config.json:/app/videos.config.json:ro
+      - lms-sessions:/app/sessions
+      - lms-screenshots:/app/screenshots
+      - lms-logs:/app/logs
+
+    # ── Health check endpoint ───────────────────────────────────────────────
+    ports:
+      - "3001:3001"
+
+    # ── Resource limits (adjust per server) ────────────────────────────────
+    # 2 concurrent videos × ~800MB each = ~1.6GB RAM recommended
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+          cpus: '2.0'
+        reservations:
+          memory: 512M
+
+    # ── Shared memory (prevents Chromium crashes in Docker) ─────────────────
+    shm_size: '1gb'
+
+    # ── Security ────────────────────────────────────────────────────────────
+    security_opt:
+      - no-new-privileges:true
+
+    # ── Logging ─────────────────────────────────────────────────────────────
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+
+    # ── Healthcheck ─────────────────────────────────────────────────────────
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+# ── Named volumes (persistent across container restarts) ──────────────────────
+volumes:
+  lms-sessions:
+    driver: local
+  lms-screenshots:
+    driver: local
+  lms-logs:
+    driver: local

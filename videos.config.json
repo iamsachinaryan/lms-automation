@@ -1,0 +1,29 @@
+{
+  "credentials": {
+    "email": "your@email.com",
+    "password": "your-password"
+  },
+  "videos": [
+    {
+      "url": "https://lms.aimdip.org/dashboard/course?module=3080c567&topic=fbc6f4a7",
+      "expectedDuration": 62,
+      "priority": 1
+    },
+    {
+      "url": "https://lms.aimdip.org/dashboard/course?module=XXXX&topic=YYYY",
+      "expectedDuration": 20,
+      "priority": 2
+    },
+    {
+      "url": "https://lms.aimdip.org/dashboard/course?module=AAAA&topic=BBBB",
+      "expectedDuration": 90,
+      "priority": 3
+    }
+  ],
+  "settings": {
+    "concurrency": 2,
+    "headless": true,
+    "screenshotOnComplete": true,
+    "notificationWebhook": ""
+  }
+}
