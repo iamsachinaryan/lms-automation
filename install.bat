@@ -9,82 +9,82 @@ echo   LMS VIDEO AUTOMATION - AUTO INSTALLER
 echo  ==========================================
 echo.
 
-:: STEP 1: Check winget
-echo [1/7] Checking package manager (winget)...
+:: ─── STEP 1: Check winget ────────────────────────────────────────────────────
+echo [1/7] Checking winget...
 winget --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo  ERROR: winget not found. Please update Windows.
+    echo  ERROR: winget nahi mila. Windows update karo.
     pause
     exit /b 1
 )
 echo  winget OK
 
-:: STEP 2: Install Node.js if missing
+:: ─── STEP 2: Install Node.js ─────────────────────────────────────────────────
 echo.
 echo [2/7] Checking Node.js...
 node --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo  Node.js not found. Installing...
+    echo  Node.js nahi hai. Install ho raha hai...
     winget install -e --id OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements
-    echo  Node.js installed! Please CLOSE and run install.bat again.
+    echo.
+    echo  ✅ Node.js install hua!
+    echo  ⚠️  Yeh window BAND karo aur install.bat DOBARA chalao!
     pause
     exit /b 0
 ) else (
-    for /f "tokens=*" %%i in ('node --version') do echo  Node.js %%i OK
+    for /f "tokens=*" %%i in ('node --version') do echo  Node.js %%i ✅
 )
 
-:: STEP 3: Install Git if missing
+:: ─── STEP 3: Install Git ─────────────────────────────────────────────────────
 echo.
 echo [3/7] Checking Git...
 git --version >nul 2>&1
 if %errorlevel% neq 0 (
-    echo  Git not found. Installing...
+    echo  Git nahi hai. Install ho raha hai...
     winget install -e --id Git.Git --accept-source-agreements --accept-package-agreements
-    echo  Git installed! Please CLOSE and run install.bat again.
+    echo.
+    echo  ✅ Git install hua!
+    echo  ⚠️  Yeh window BAND karo aur install.bat DOBARA chalao!
     pause
     exit /b 0
 ) else (
-    for /f "tokens=*" %%i in ('git --version') do echo  %%i OK
+    for /f "tokens=*" %%i in ('git --version') do echo  %%i ✅
 )
 
-:: STEP 4: Clone the repository
+:: ─── STEP 4: Clone Repo ──────────────────────────────────────────────────────
 echo.
-echo [4/7] Cloning project from GitHub...
+echo [4/7] Project download ho raha hai GitHub se...
 
 if exist "lms-automation" (
-    echo  Folder already exists. Skipping clone.
+    echo  Folder already hai. Skip.
     cd lms-automation
 ) else (
-    echo.
-    echo  GitHub Token chahiye (private repo ke liye)
-    echo  Token banao: https://github.com/settings/tokens/new
-    echo    - Expiration: 90 days
-    echo    - Sirf "repo" checkbox tick karo
-    echo    - Generate karke copy karo
-    echo.
-    set /p GH_TOKEN="  GitHub Token paste karo: "
-    echo.
-    git clone https://%GH_TOKEN%@github.com/iamsachinaryan/lms-automation.git
+    git clone https://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@github.com/iamsachinaryan/lms-automation.git
     if %errorlevel% neq 0 (
-        echo  ERROR: Clone fail! Token galat ya internet nahi.
+        echo  ERROR: Download fail hua! Internet check karo.
         pause
         exit /b 1
     )
     cd lms-automation
+    echo  Project download hua ✅
 )
 
-:: STEP 5: Create .env file
+:: ─── STEP 5: Create .env ─────────────────────────────────────────────────────
 echo.
-echo [5/7] Setting up .env configuration...
+echo [5/7] Account setup...
 
 if exist ".env" (
-    echo  .env already exists. Skipping.
+    echo  .env already hai. Skip.
 ) else (
     echo.
-    echo  LMS credentials daalo:
-    set /p LMS_EMAIL="  Email: "
-    set /p LMS_PASSWORD="  Password: "
+    echo  ╔══════════════════════════════════════╗
+    echo  ║   lms.aimdip.org ka login daalo      ║
+    echo  ╚══════════════════════════════════════╝
     echo.
+    set /p LMS_EMAIL="  Email daalo: "
+    set /p LMS_PASSWORD="  Password daalo: "
+    echo.
+
     (
         echo LMS_EMAIL=%LMS_EMAIL%
         echo LMS_PASSWORD=%LMS_PASSWORD%
@@ -111,20 +111,23 @@ if exist ".env" (
         echo GENERIC_WEBHOOK_URL=
         echo REPORT_CRON=59 23 * * *
     ) > .env
-    echo  .env file created OK
+
+    echo  Account save hua ✅
 )
 
-:: STEP 6: Create required folders
+:: ─── STEP 6: Create Folders ──────────────────────────────────────────────────
 echo.
-echo [6/7] Creating required folders...
+echo [6/7] Folders bana raha hai...
 if not exist "sessions"     mkdir sessions
 if not exist "screenshots"  mkdir screenshots
 if not exist "logs"         mkdir logs
-echo  Folders OK
+echo  Folders ready ✅
 
-:: STEP 7: npm install
+:: ─── STEP 7: npm install ─────────────────────────────────────────────────────
 echo.
-echo [7/7] Installing dependencies (2-5 min lagenge, wait karo)...
+echo [7/7] Dependencies install ho rahi hain...
+echo  (2-5 minute lag sakte hain, ruko)
+echo.
 call npm install
 if %errorlevel% neq 0 (
     echo  ERROR: npm install fail hua!
@@ -132,22 +135,31 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
+:: ─── ALL DONE ─────────────────────────────────────────────────────────────────
 echo.
 echo  ==========================================
-echo   SETUP COMPLETE!
+echo   SETUP COMPLETE! ✅
 echo  ==========================================
 echo.
-echo   Abhi run karo:
-echo     node setup.js   (pehli baar - browser mein login karo)
-echo     node server.js  (server start)
-echo     http://localhost:3000 (browser mein kholo)
+echo  Ab kya karna hai:
+echo.
+echo   STEP 1 - Pehli baar setup (browser khulega):
+echo            node setup.js
+echo.
+echo   STEP 2 - Server start karo:
+echo            node server.js
+echo.
+echo   STEP 3 - Browser mein kholo:
+echo            http://localhost:3000
 echo  ==========================================
 echo.
-set /p RUN_SETUP="  Abhi node setup.js chalayein? (y/n): "
+set /p RUN_SETUP="  Abhi setup chalayein? (y/n): "
 if /i "%RUN_SETUP%"=="y" (
+    echo.
+    echo  Browser khul raha hai - login karo aur video play karo...
     node setup.js
     echo.
-    echo  Ab server start kar rahe hain...
+    echo  Server start ho raha hai...
     node server.js
 )
 
