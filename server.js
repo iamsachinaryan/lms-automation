@@ -8,26 +8,25 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.use(express.json());
+app.use(express.json({ limit: '5mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Initialize Video Manager
 const videoManager = new VideoManager(io);
 
-// API Endpoints
+// ── Single Video (goes through queue) ─────────────────────────────
 app.get('/api/jobs', (req, res) => {
     res.json(videoManager.getJobs());
 });
 
 app.post('/api/jobs', async (req, res) => {
-    const { url, duration } = req.body;
+    const { url, duration, name } = req.body;
     if (!url || !duration) {
         return res.status(400).json({ error: 'URL and duration are required.' });
     }
-    
     try {
-        const job = await videoManager.addJob(url, parseInt(duration));
-        res.json({ success: true, job });
+        const result = await videoManager.enqueue(url, parseInt(duration), name || '');
+        res.json({ success: true, ...result });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -42,19 +41,51 @@ app.post('/api/jobs/:id/stop', async (req, res) => {
     }
 });
 
-// Socket.io for Real-time Live View and Progress
+// ── CSV Bulk Queue ──────────────────────────────────────────────────
+app.get('/api/queue', (req, res) => {
+    res.json({
+        pending: videoManager.getQueue(),
+        count: videoManager.getQueue().length,
+        isRunning: videoManager.isQueueRunning
+    });
+});
+
+app.post('/api/queue/bulk', async (req, res) => {
+    const { videos } = req.body;
+    if (!videos || !Array.isArray(videos) || videos.length === 0) {
+        return res.status(400).json({ error: 'Videos array required.' });
+    }
+    // Validate each video
+    for (const v of videos) {
+        if (!v.url || !v.duration || isNaN(parseInt(v.duration))) {
+            return res.status(400).json({ error: 'Each video must have url and duration.' });
+        }
+    }
+    try {
+        const result = await videoManager.enqueueBulk(videos);
+        res.json({ success: true, ...result });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ── Socket.io ───────────────────────────────────────────────────────
 io.on('connection', (socket) => {
     console.log('Client connected to Dashboard');
-    
-    // Client requests live view for a specific job
+
+    // Send current queue state to new client
+    socket.emit('queue-updated', {
+        pending: videoManager.getQueue().map((v, i) => ({ ...v, position: i + 1 })),
+        count: videoManager.getQueue().length,
+        isRunning: videoManager.isQueueRunning
+    });
+
     socket.on('request-live-view', (jobId) => {
         videoManager.subscribeLiveView(socket.id, jobId);
     });
-
     socket.on('stop-live-view', () => {
         videoManager.unsubscribeLiveView(socket.id);
     });
-    
     socket.on('disconnect', () => {
         videoManager.unsubscribeLiveView(socket.id);
     });

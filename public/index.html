@@ -24,19 +24,44 @@
 
         <main class="dashboard">
             <section class="add-job-section glass-panel">
-                <h2>Add New Video</h2>
-                <form id="job-form">
-                    <div class="input-group">
-                        <label for="url">Video URL</label>
-                        <input type="url" id="url" placeholder="https://lms.aimdip.org/dashboard/course?module=..."
-                            required>
+                <div class="tabs">
+                    <button class="tab-btn active" id="tab-btn-single">Single Video</button>
+                    <button class="tab-btn" id="tab-btn-bulk">CSV Bulk Upload</button>
+                </div>
+                
+                <div id="tab-single" class="tab-content active">
+                    <h2>Add New Video</h2>
+                    <form id="job-form">
+                        <div class="input-group">
+                            <label for="url">Video URL</label>
+                            <input type="url" id="url" placeholder="https://lms.aimdip.org/dashboard/course?module=..." required>
+                        </div>
+                        <div class="input-group">
+                            <label for="duration">Duration (Minutes)</label>
+                            <input type="number" id="duration" placeholder="62" min="1" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Add to Queue</button>
+                    </form>
+                </div>
+
+                <div id="tab-bulk" class="tab-content">
+                    <h2>Bulk Upload via CSV</h2>
+                    <p class="help-text" style="color: #cbd5e1; margin-bottom: 1rem; font-size: 0.9rem;">CSV format: url,duration</p>
+                    <input type="file" id="csv-file" accept=".csv" class="file-input" />
+                    
+                    <div id="csv-preview" class="csv-preview hidden" style="margin-top: 1.5rem;">
+                        <h4 style="margin-bottom: 0.5rem;">Preview (<span id="csv-count">0</span> videos):</h4>
+                        <div class="preview-list" id="csv-list" style="max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;"></div>
+                        <button id="btn-upload-csv" class="btn-primary">Add All to Queue</button>
                     </div>
-                    <div class="input-group">
-                        <label for="duration">Duration (Minutes)</label>
-                        <input type="number" id="duration" placeholder="62" min="1" required>
-                    </div>
-                    <button type="submit" class="btn-primary">Start Automation</button>
-                </form>
+                </div>
+            </section>
+
+            <section class="queue-section glass-panel" style="margin-bottom: 3rem;">
+                <h2>Up Next in Queue (<span id="queue-count">0</span> pending)</h2>
+                <div id="queue-list" class="queue-list">
+                    <p style="color: #94a3b8;">Queue is empty.</p>
+                </div>
             </section>
 
             <section class="jobs-section">
