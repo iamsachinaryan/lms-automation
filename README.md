@@ -31,3 +31,23 @@ A full-fledged Web Dashboard for managing LMS video sessions. It allows you to r
 - **Live View Stream:** Curious if the video is actually playing? Click the "View Live" button to get a real-time screenshot stream from the headless browser without interrupting it.
 - **Progress Tracking:** See live progress bars for all your active sessions.
 - **Background Autoplay:** The bot automatically clicks the video (even YouTube iframes) to ensure playback starts.
+
+<!---LeetCode Topics Start-->
+# LeetCode Topics
+## Array
+|  |
+| ------- |
+| [1385-find-the-distance-value-between-two-arrays](https://github.com/iamsachinaryan/lms-automation/tree/master/1385-find-the-distance-value-between-two-arrays) |
+## Two Pointers
+|  |
+| ------- |
+| [1385-find-the-distance-value-between-two-arrays](https://github.com/iamsachinaryan/lms-automation/tree/master/1385-find-the-distance-value-between-two-arrays) |
+## Binary Search
+|  |
+| ------- |
+| [1385-find-the-distance-value-between-two-arrays](https://github.com/iamsachinaryan/lms-automation/tree/master/1385-find-the-distance-value-between-two-arrays) |
+## Sorting
+|  |
+| ------- |
+| [1385-find-the-distance-value-between-two-arrays](https://github.com/iamsachinaryan/lms-automation/tree/master/1385-find-the-distance-value-between-two-arrays) |
+<!---LeetCode Topics End-->
